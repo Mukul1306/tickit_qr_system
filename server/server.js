@@ -5,13 +5,17 @@ require("dotenv").config();
 
 const app = express();
 
+const adRoutes = require("./routes/adRoutes");
 const superAdminRoutes = require("./routes/superAdminRoutes");
+app.use(cors(
+  {
+    origin: "http://localhost:3000",
+    credentials: true
+  }
+));
 
-app.use(cors({
-  origin: "https://your-frontend-name.vercel.app",
-  credentials: true
-}));
 app.use(express.json());
+
 
 
 mongoose.connect(process.env.MONGO_URI)
@@ -19,11 +23,12 @@ mongoose.connect(process.env.MONGO_URI)
 .catch(err => console.log(err));
 
 app.use("/api/super-admin", superAdminRoutes);
-
+app.use("/api/payment", require("./routes/paymentRoutes"));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/events", require("./routes/eventRoutes"));
 app.use("/api/bookings", require("./routes/bookingRoutes"));
-
+app.use("/api/help", require("./routes/helpRoutes"));
+app.use("/api/ads", require("./routes/adRoutes"));
 app.listen(process.env.PORT, () =>
   console.log(`Server running on port ${process.env.PORT}`)
 );

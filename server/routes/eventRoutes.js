@@ -39,18 +39,58 @@ router.post("/create", auth, async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
+    const { search, date } = req.query;
 
-    const events = await Event.find({ status: "approved" })
-      .sort({ createdAt: -1 });
+    let query = { status: "approved" };
+
+    // 🔎 Search by title
+    if (search) {
+      query.title = { $regex: search, $options: "i" };
+    }
+
+    // 📅 Filter by exact date
+    if (date) {
+      const selectedDate = new Date(date);
+
+      const nextDay = new Date(selectedDate);
+      nextDay.setDate(selectedDate.getDate() + 1);
+
+      query.date = {
+        $gte: selectedDate,
+        $lt: nextDay
+      };
+    }
+
+    const events = await Event.find(query).sort({ createdAt: -1 });
 
     res.json(events);
 
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 
+// =====================================
+// GET TRENDING EVENTS
+// =====================================
+router.get("/trending", async (req, res) => {
+  try {
+
+    const events = await Event.find({
+      status: "approved",
+      isTrending: true
+    })
+    .sort({ createdAt: -1 })
+    .limit(4);
+
+    res.json(events);
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // ======================================================
 // 🔵 ADMIN - GET VOLUNTEER REQUESTS FOR EVENT
@@ -182,6 +222,57 @@ router.get("/super/all-events", auth, async (req, res) => {
   }
 });
 
+
+router.get("/superadmin/stats", auth, async (req, res) => {
+  if (req.user.role !== "super_admin")
+    return res.status(403).json({ message: "Access denied" });
+
+  const events = await Event.find();
+
+  const result = await Promise.all(
+    events.map(async (event) => {
+    const count = await Booking.countDocuments({
+          eventId: event._id,
+          paymentStatus: { $in: ["paid", "success"] }
+        });
+
+      return {
+        ...event._doc,
+        totalRegistrations: count
+      };
+    })
+  );
+
+  res.json(result);
+});
+
+
+// ==========================================
+// 💰 SUPER ADMIN - TOTAL REVENUE
+// ==========================================
+router.get("/superadmin/total-revenue", auth, async (req, res) => {
+  try {
+
+    if (req.user.role !== "super_admin")
+      return res.status(403).json({ message: "Access denied" });
+
+    const bookings = await Booking.find({
+      paymentStatus: { $in: ["paid", "success"] }
+    }).populate("eventId");
+
+    const totalRevenue = bookings.reduce((sum, booking) => {
+      const price = booking.eventId?.price || 0;
+      const quantity = booking.quantity || 1;
+      return sum + price * quantity;
+    }, 0);
+
+    res.json({ totalRevenue });
+
+  } catch (error) {
+    console.log("TOTAL REVENUE ERROR:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // ======================================================
 // 👑 SUPER ADMIN - APPROVE / REJECT EVENT
@@ -359,5 +450,32 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
+
+
+// SUPER ADMIN - TOGGLE TRENDING
+router.put("/super/toggle-trending/:id", auth, async (req, res) => {
+  try {
+
+    if (req.user.role !== "super_admin")
+      return res.status(403).json({ message: "Access denied" });
+
+    const event = await Event.findById(req.params.id);
+
+    if (!event)
+      return res.status(404).json({ message: "Event not found" });
+
+    event.isTrending = !event.isTrending;
+    await event.save();
+
+    res.json({
+      message: "Trending status updated",
+      isTrending: event.isTrending
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

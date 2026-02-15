@@ -148,6 +148,7 @@ router.get("/events", auth, superAdminOnly, async (req, res) => {
   }
 });
 
+
 // ======================================================
 // 🗑 DELETE EVENT
 // ======================================================
@@ -168,5 +169,9 @@ router.delete("/delete-event/:id", auth, superAdminOnly, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+
+
 
 module.exports = router;

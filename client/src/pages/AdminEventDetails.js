@@ -176,11 +176,12 @@ const handleRequest = async (requestId, status) => {
       <th className="p-3">Name</th>
       <th className="p-3">Email</th>
       <th className="p-3">Age</th>
-     
+      <th classname="p-3">Quantity</th>
+      <th className="p-3">College ID</th>
+      <th className="p-3">College</th>
+      <th className="p-3">Location</th>
       <th className="p-3">Custom Fields</th>
-      
       <th className="p-3">Payment</th>
-      <th className="p-3">UTR Number</th>
       <th className="p-3">Checked In</th>
       <th className="p-3">Action</th>
     </tr>
@@ -191,19 +192,28 @@ const handleRequest = async (requestId, status) => {
 
       {/* Default Fields */}
       <td className="p-3 font-semibold">
-        {b.name || "N/A"}
+        {b.name || "-"}
       </td>
 
       <td className="p-3">
-        {b.email || "N/A"}
+        {b.email || "-"}
       </td>
 
       <td className="p-3">
         {b.age || "-"}
       </td>
-
-     
-
+       <td className="p-3">
+        {b.quantity || "-"}
+      </td>
+      <td className="p-3">
+        {b.collegeId || "-"}
+      </td>
+      <td className="p-3">
+        {b.collegeName || "-"}  
+      </td>
+      <td className="p-3">
+        {b.location || "-"}
+      </td>
 
       {/* 🔥 CUSTOM FIELDS */}
       <td className="p-3 text-sm">
@@ -222,7 +232,6 @@ const handleRequest = async (requestId, status) => {
       <td className="p-3 text-green-600 font-bold">
         {b.paymentStatus}
       </td>
-         <td className="p-3">{b.utrNumber || "-"}</td>
 
       {/* Checked In */}
       <td className="p-3">

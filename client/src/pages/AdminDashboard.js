@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 function AdminDashboard() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
-
+const [ads, setAds] = useState([]);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -25,7 +25,26 @@ function AdminDashboard() {
       console.log(err);
     }
   };
+  useEffect(() => {
+  fetchMyAds();
+}, []);
 
+const fetchMyAds = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      "http://localhost:5000/api/ads/my-ads",
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+
+    setAds(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 const deleteEvent = async (id) => {
   try {
   await axios.delete(
@@ -42,7 +61,22 @@ const deleteEvent = async (id) => {
   }
 };
 
+const deleteAd = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
 
+    await axios.delete(
+      `http://localhost:5000/api/ads/delete/${id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+
+    fetchMyAds(); // refresh list
+  } catch (error) {
+    console.log(error);
+  }
+};
   return (
     
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-white p-10">
@@ -58,6 +92,57 @@ const deleteEvent = async (id) => {
       >
         + Create Event
       </button>
+
+        <button
+        onClick={() => navigate("/admin/create-ad")}
+        className="mb-8 bg-blue-500 text-white px-6 py-2 rounded-lg"
+      >
+        + Create Advertisement
+      </button>
+              
+
+              {/* ================= MY ADS ================= */}
+  
+<h2 className="admin-section-title">My Advertisements</h2>
+               <div className="admin-top-actions">
+  <button
+    className="manage-ads-btn"
+    onClick={() => navigate("/admin/ads")}
+  >
+    📢 Manage My Ads
+  </button>
+</div>
+<div className="admin-ads-grid">
+  {ads.length === 0 ? (
+    <p>No ads created yet.</p>
+  ) : (
+    ads.map((ad) => (
+      <div key={ad._id} className="admin-ad-card">
+        <img src={ad.imageUrl} alt={ad.title} />
+
+       <div className="admin-ad-content">
+  <h3>{ad.title}</h3>
+  <p>{ad.description}</p>
+
+  <div className="ad-status">
+    Status:
+    <span className={`status-badge ${ad.status}`}>
+      {ad.status}
+    </span>
+  </div>
+
+  <button
+    className="delete-ad-btn"
+    onClick={() => deleteAd(ad._id)}
+  >
+    Delete
+  </button>
+</div>
+      </div>
+    ))
+  )}
+</div>
+
 
       <div className="grid md:grid-cols-3 gap-6">
         {events.length === 0 ? (

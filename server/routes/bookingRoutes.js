@@ -5,60 +5,84 @@ const auth = require("../middleware/auth");
 const QRCode = require("qrcode");
 
 
-// ==========================================
-// 🔥 CREATE BOOKING
-// ==========================================
 router.post("/create/:eventId", auth, async (req, res) => {
   try {
 
     const event = await Event.findById(req.params.eventId);
-
     if (!event)
       return res.status(404).json({ message: "Event not found" });
 
-    if (event.availableSeats <= 0)
-      return res.status(400).json({ message: "No seats available" });
+    const quantity = Number(req.body.quantity) || 1;
 
-    // 🔥 Build custom responses dynamically
-    const customResponses = req.body.customResponses || [];
+    const maxLimit = event.isPaid ? 4 : 2;
 
-   
-    
+    if (quantity > maxLimit) {
+      return res.status(400).json({
+        message: `You can book maximum ${maxLimit} tickets`
+      });
+    }
 
-    console.log("CUSTOM RESPONSES:", customResponses); // ✅ CORRECT PLACE
+    const userBookings = await Booking.aggregate([
+      {
+        $match: {
+          userId: req.user.id,
+          eventId: event._id
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$quantity" }
+        }
+      }
+    ]);
 
-    // Reduce seat
-    event.availableSeats -= 1;
-    await event.save();
+    const alreadyBooked =
+      userBookings.length > 0 ? userBookings[0].total : 0;
 
-    const bookingId = "BOOK" + Date.now();
+    if (alreadyBooked + quantity > maxLimit) {
+      return res.status(400).json({
+        message: `Booking limit exceeded`
+      });
+    }
 
-    const booking = new Booking({
-      userId: req.user.id,
-      eventId: event._id,
+    if (event.availableSeats < quantity) {
+      return res.status(400).json({
+        message: "Not enough seats available"
+      });
+    }
 
-      name: req.body.name,
-      email: req.body.email,
-      age: req.body.age,
-      collegeId: req.body.collegeId,
-      collegeName: req.body.collegeName,
-      location: req.body.location,
-      linkedin: req.body.linkedin,
-      utrNumber: req.body.utrNumber,
+    // 🔥 FREE EVENT → create directly
+    if (!event.isPaid) {
 
-       customResponses,  // 🔥 THIS WAS MISSING
+      event.availableSeats -= quantity;
+      await event.save();
 
-      bookingId,
-      paymentStatus: "success"
-    });
+      const bookingId = "BOOK" + Date.now();
+      const qrCodeImage = await QRCode.toDataURL(bookingId);
 
-    await booking.save();
+      const booking = new Booking({
+        userId: req.user.id,
+        eventId: event._id,
+        eventname: event.title,
+        quantity,
+        qrCode: qrCodeImage,
+        bookingId,
+        paymentStatus: "success"
+      });
 
-    const qr = await QRCode.toDataURL(bookingId);
+      await booking.save();
 
-    res.json({
-      message: "Booking successful",
-      qrCode: qr
+      return res.json({
+        message: "Free ticket booked successfully",
+        qrCode: qrCodeImage
+      });
+    }
+
+    // 🔥 PAID EVENT → DO NOT CREATE BOOKING HERE
+    return res.json({
+      message: "Proceed to payment",
+      amount: event.price * quantity
     });
 
   } catch (error) {
@@ -66,7 +90,77 @@ router.post("/create/:eventId", auth, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+//  ==========================================
+// 🔥 confirm (No Payment)
+// ==========================================
+ router.post("/confirm/:eventId", auth, async (req, res) => {
+  try {
 
+    const event = await Event.findById(req.params.eventId);
+    const quantity = Number(req.body.quantity);
+
+    if (!event)
+      return res.status(404).json({ message: "Event not found" });
+
+    if (event.availableSeats < quantity)
+      return res.status(400).json({ message: "Seats not available" });
+
+    event.availableSeats -= quantity;
+    await event.save();
+
+    const bookingId = "BOOK" + Date.now();
+    const qrCodeImage = await QRCode.toDataURL(bookingId);
+
+    const booking = new Booking({
+      userId: req.user.id,
+      eventId: event._id,
+      name : req.body.name,
+      email : req.body.email,
+      age : req.body.age,
+      collegeId : req.body.collegeId,
+      collegeName : req.body.collegeName,
+      location : req.body.location,
+      linkedin : req.body.linkedin,
+      customResponses: req.body.customResponses || [],
+      eventname: event.title,
+      quantity,
+      qrCode: qrCodeImage,
+      bookingId,
+      paymentStatus: "success"
+    });
+
+    await booking.save();
+
+    res.json({
+      message: "Payment successful. Ticket generated.",
+      qrCode: qrCodeImage
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ==========================================
+// 🔥 GET MY BOOKINGS (User)
+// ==========================================
+router.get("/my-bookings", auth, async (req, res) => {
+  try {
+
+    const bookings = await Booking.find({
+      userId: req.user.id   // 👈 IMPORTANT
+    })
+      .populate("eventId")
+      .sort({ createdAt: -1 });
+      
+
+    res.json(bookings);
+
+  } catch (error) {
+    console.error("MY BOOKINGS ERROR:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // ==========================================
 // 🔥 GET BOOKINGS FOR EVENT (Admin)
@@ -98,6 +192,57 @@ router.get("/event-bookings/:eventId", auth, async (req, res) => {
 });
 
 
+router.post("/validate/:eventId", auth, async (req, res) => {
+  try {
+
+    const event = await Event.findById(req.params.eventId);
+    const quantity = Number(req.body.quantity) || 1;
+
+    if (!event)
+      return res.status(404).json({ message: "Event not found" });
+
+    const maxLimit = event.isPaid ? 4 : 2;
+
+    if (quantity > maxLimit)
+      return res.status(400).json({
+        message: `Max ${maxLimit} tickets allowed`
+      });
+
+    const userBookings = await Booking.aggregate([
+      {
+        $match: {
+          userId: req.user.id,
+          eventId: event._id
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$quantity" }
+        }
+      }
+    ]);
+
+    const alreadyBooked =
+      userBookings.length > 0 ? userBookings[0].total : 0;
+
+    if (alreadyBooked + quantity > maxLimit)
+      return res.status(400).json({
+        message: `Limit exceeded. You already booked ${alreadyBooked}`
+      });
+
+    if (event.availableSeats < quantity)
+      return res.status(400).json({
+        message: "Not enough seats available"
+      });
+
+    res.json({ message: "Validation passed" });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+  
 // ==========================================
 // 🔥 DELETE BOOKING
 // ==========================================
@@ -155,6 +300,12 @@ router.get("/verify/:bookingId", auth, async (req, res) => {
       name: booking.name,
       email: booking.email,
       age: booking.age,
+      collegeId: booking.collegeId,
+      collegeName: booking.collegeName,
+      location: booking.location,
+      linkedin: booking.linkedin, 
+      quantity: booking.quantity,
+      customResponses: booking.customResponses || [],
 
       event: {
         title: booking.eventId.title,

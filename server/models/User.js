@@ -8,7 +8,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["super_admin", "event_admin", "volunteer", "user"],
     default: "user"
-  }
-}, { timestamps: true });
+  },
+
+    isSuspended: { type: Boolean, default: false },
+
+},
+
+{ timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);

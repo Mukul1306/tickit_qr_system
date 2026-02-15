@@ -8,11 +8,12 @@ function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-    
+    const [booking, setBooking] = useState(null);
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [qr, setQr] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const [customResponses, setCustomResponses] = useState([]);
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -25,7 +26,6 @@ function EventDetails() {
     collegeName: "",
     location: "",
     linkedin: "",
-    utrNumber: ""
   });
 
   // ==============================
@@ -52,6 +52,94 @@ function EventDetails() {
     fetchEvent();
   }, [id]);
 
+
+const handlePayment = async () => {
+
+  try {
+
+    // 🔥 STEP 1: VALIDATE FIRST
+    const validationRes = await axios.post(
+      `http://localhost:5000/api/bookings/validate/${event._id}`,
+      { quantity },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // If backend returns error → it will throw
+    // If success → continue
+
+    if (!event.isPaid) {
+      await axios.post(
+        `http://localhost:5000/api/bookings/create/${event._id}`,
+        { quantity },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert("Free ticket booked successfully!");
+      return;
+    }
+
+    // 🔥 STEP 2: CREATE ORDER
+    const orderRes = await axios.post(
+      `http://localhost:5000/api/payment/create-order/${event._id}`,
+      { quantity },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const { order } = orderRes.data;
+
+    const options = {
+      key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: "INR",
+      name: "EventHub",
+      order_id: order.id,
+handler: async function (response) {
+
+  try {
+
+    const verifyRes = await axios.post(
+      "http://localhost:5000/api/payment/verify-payment",
+      {
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+        eventId: event._id,
+        quantity ,
+       
+         name : form.name,
+         email : form.email,
+         age : form.age,
+          collegeId : form.collegeId,
+          collegeName : form.collegeName,
+          location : form.location,
+          linkedin : form.linkedin,
+          customResponses
+
+
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const bookingData = verifyRes.data.booking;
+
+    setBooking(bookingData);     // 🔥 save booking
+    setQr(bookingData.qrCode);   // 🔥 save QR
+    setShowModal(true);          // 🔥 open ticket modal
+
+    alert("Payment successful 🎉");
+
+  } catch (error) {
+    alert("Payment verification failed");
+  }
+}};
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+
+  } catch (error) {
+    alert(error.response?.data?.message || "Something went wrong");
+  }
+};
   // ==============================
   // Book Ticket
   // ==============================
@@ -151,6 +239,8 @@ function EventDetails() {
     doc.text(`Name: ${form.name}`, 10, 123);
     doc.text(`Email: ${form.email}`, 10, 130);
     doc.text(`College: ${form.collegeName}`, 10, 137);
+    doc.text(`Age: ${form.age}`, 10, 144);
+    doc.text(`Seat Qty: ${quantity}`, 10, 151);
 
     doc.setTextColor(248, 68, 100);
     doc.text(
@@ -229,6 +319,41 @@ function EventDetails() {
       setForm({ ...form, age: e.target.value })
     }
   />
+  
+  <input
+    type="text"
+    placeholder="College Name"
+    required
+    onChange={(e) =>
+      setForm({ ...form, collegeName: e.target.value })
+    }
+  />
+  <input
+    type="text"   
+    placeholder="College ID"
+    required
+    onChange={(e) =>
+      setForm({ ...form, collegeId: e.target.value })
+    }
+  />
+
+  <input
+    type="text" 
+    placeholder="Location"
+    required
+    onChange={(e) =>
+      setForm({ ...form, location: e.target.value })
+    }
+  />
+
+  <input
+  type="number"
+  placeholder="Seat Quantity"
+  min="1"
+  max={event.isPaid ? 4 : 2}
+  value={quantity}
+  onChange={(e) => setQuantity(e.target.value)}
+/>
 
   {/* 🔥 CUSTOM FIELDS FROM ADMIN */}
   {event.customFields?.map((field, index) => (
@@ -245,20 +370,10 @@ function EventDetails() {
     />
   ))}
 
-  {event.isPaid && (
-    <input
-      type="text"
-      placeholder="Enter UTR Number"
-      required
-      onChange={(e) =>
-        setForm({ ...form, utrNumber: e.target.value })
-      }
-    />
-  )}
 
-  <button type="submit">
-    {loading ? "Processing..." : "Confirm Booking"}
-  </button>
+<button type="button" onClick={handlePayment}>
+  Pay & Book
+</button>
 
 </form>
         </div>
@@ -284,7 +399,11 @@ function EventDetails() {
 
               <div className="ticket-content">
                 <div className="ticket-qr">
-                  <img src={qr} alt="QR Code" />
+                 <img 
+  src={booking.qrCode} 
+  alt="QR Code"
+  style={{ width: "150px", height: "150px" }}
+/>
                 </div>
 
                 <div className="ticket-details">

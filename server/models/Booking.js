@@ -4,25 +4,30 @@ const bookingSchema = new mongoose.Schema({
 
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
+    required: true
   },
 
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Event"
+    ref: "Event",
+    required: true
   },
+    quantity: {
+    type: Number,
+    default: 1
+  },
+
      
   name: String,
   email: String,
   age: Number,
 
+  eventname: String, // 🔥 ADDED THIS FOR EASY ACCESS IN USER ORDERS
+location: String, // 🔥 ADDED THIS TO SHOW BOOKING DATE IN USER ORDERS
   collegeId: String,
   collegeName: String,
-  location: String,
   linkedin: String,
-
-  utrNumber: String,
-
   bookingId: String,
 
   paymentStatus: {
@@ -30,15 +35,21 @@ const bookingSchema = new mongoose.Schema({
     default: "success"
   },
    customResponses: {
-  type: [
+  type: [ 
     {
       label: String,
       value: String
     }
   ],
+
+
+
   default: []
 },
     
+  qrCode :{
+    type: String
+  },
 
   isCheckedIn: {
     type: Boolean,

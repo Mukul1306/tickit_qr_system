@@ -1,3 +1,4 @@
+const e = require("express");
 const jwt = require("jsonwebtoken");
 
 module.exports = function (req, res, next) {
@@ -17,6 +18,8 @@ module.exports = function (req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
+    name = decoded.name;
+    email = decoded.email;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });

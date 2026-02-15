@@ -1,104 +1,595 @@
-:root {
-  --fest-pink: #f84464;
-  --dark-navy: #1a1c2e;
-  --live-green: #22c55e;
-}
-
-.home-wrapper {
-  background: #f8f9fa;
-  min-height: 100vh;
-  font-family: 'Inter', sans-serif;
-}
-
-.content-container {
+.dashboard-container {
+  padding: 30px;
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: auto;
 }
 
-/* HERO SECTION */
-.fest-hero-banner {
-  position: relative;
-  height: 350px;
+/* ===== ADS ===== */
+
+.ads-section {
+  margin-bottom: 50px;
+}
+
+.ads-title {
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.ads-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+}
+
+.ads-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.ad-card {
+  flex: 0 0 85%;
+  max-width: 400px;
+  height: 220px;
   border-radius: 20px;
   overflow: hidden;
-  background: var(--dark-navy);
-  margin-bottom: 40px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  position: relative;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transition: transform 0.3s ease;
 }
 
-.hero-img {
-  width: 100%; height: 100%; object-fit: cover; opacity: 0.5;
+.ad-card:hover {
+  transform: scale(1.05);
 }
 
-.hero-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  padding: 40px; display: flex; flex-direction: column; justify-content: center;
-  z-index: 2;
+.ad-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.live-badge {
-  background: var(--live-green); color: white; padding: 5px 15px;
-  border-radius: 20px; font-size: 11px; font-weight: bold;
-  margin-bottom: 15px; width: fit-content;
+.ad-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8),
+    transparent
+  );
+  color: white;
 }
 
-.hero-overlay h1 { color: white; font-size: 36px; margin-bottom: 25px; line-height: 1.2; }
-
-.register-btn {
-  background: var(--fest-pink); color: white; border: none;
-  padding: 14px 30px; border-radius: 30px; font-weight: bold; cursor: pointer;
+.learn-btn {
+  margin-top: 10px;
+  padding: 6px 14px;
+  border: none;
+  background: white;
+  color: black;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
 }
 
-/* PILLS */
-.category-row {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+/* ===== EVENTS ===== */
+
+.section-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  margin-top: 50px;
+  color: #0f172a;
 }
 
-.pills-container { display: flex; gap: 10px; overflow-x: auto; }
-
-.pill-item {
-  padding: 10px 22px; border-radius: 25px; border: 1px solid #ddd;
-  background: white; cursor: pointer; white-space: nowrap;
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 25px;
 }
 
-.pill-item.active { background: var(--dark-navy); color: white; border-color: var(--dark-navy); }
-.schedule-link { color: var(--fest-pink); font-weight: 600; font-size: 14px; cursor: pointer; }
-
-/* VERTICAL POSTER CARDS */
-.fest-event-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px;
+.event-card {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: 0.3s ease;
 }
 
-.fest-vertical-card {
-  background: var(--dark-navy); border-radius: 20px; overflow: hidden;
-  height: 420px; position: relative; transition: 0.3s ease; cursor: pointer;
+.event-card:hover {
+  transform: translateY(-5px);
 }
 
-.fest-vertical-card:hover { transform: translateY(-10px); }
-
-.card-top-area { position: relative; height: 100%; }
-.card-top-area img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
-
-.card-tag {
-  position: absolute; top: 15px; right: 15px; background: white;
-  padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: bold;
+.event-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
 }
 
-.card-bottom-info { position: absolute; bottom: 70px; left: 20px; color: white; }
-.card-bottom-info h4 { font-size: 20px; margin-bottom: 8px; }
-.card-bottom-info p { font-size: 13px; opacity: 0.8; margin: 3px 0; }
-
-.card-urgent-footer { position: absolute; bottom: 20px; left: 20px; }
-.seats-warning {
-  background: var(--fest-pink); color: white; padding: 6px 15px;
-  border-radius: 20px; font-size: 12px; font-weight: bold;
+.event-content {
+  padding: 15px;
 }
 
-/* MOBILE FIX */
+.event-content h3 {
+  margin-bottom: 8px;
+}
+
+.event-content span {
+  color: #ff3b5c;
+  font-weight: 600;
+}
+
+/* ===============================
+   SPONSORED HERO SECTION
+=================================*/
+
+.sponsored-container {
+  width: 100%;
+  margin: 30px 0;
+  padding: 0 20px;
+   object-fit: cover;
+}
+
+.sponsored-hero {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.sponsored-hero:hover {
+  transform: scale(1.01);
+}
+
+.sponsored-overlay {
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.75) 0%,
+    rgba(0,0,0,0.55) 40%,
+    rgba(0,0,0,0.3) 70%,
+    rgba(0,0,0,0.1) 100%
+  );
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 600px;
+}
+
+.sponsored-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  color: #facc15;
+}
+
+.sponsored-title {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.sponsored-desc {
+  font-size: 16px;
+  opacity: 0.9;
+  margin-bottom: 25px;
+}
+
+.learn-btn {
+  background: #facc15;
+  color: #000;
+  border: none;
+  padding: 12px 24px;
+  font-weight: 600;
+  border-radius: 6px;
+  width: fit-content;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.learn-btn:hover {
+  background: #eab308;
+  transform: translateY(-2px);
+}
+
+
+/* ===============================
+   RESPONSIVE DESIGN
+=================================*/
+
 @media (max-width: 768px) {
-  .fest-hero-banner { height: 220px; }
-  .hero-overlay h1 { font-size: 22px; }
-  .hero-overlay { padding: 20px; }
-  .fest-event-grid { grid-template-columns: 1fr; }
+
+  .sponsored-hero {
+    height: 260px;
+  }
+
+  .sponsored-overlay {
+    padding: 20px;
+  }
+
+  .sponsored-title {
+    font-size: 22px;
+  }
+
+  .sponsored-desc {
+    font-size: 13px;
+  }
+
+  .learn-btn {
+    padding: 8px 15px;
+    font-size: 13px;
+  }
+
+}
+
+.fade-slide {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+.search-modern {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 14px 20px 14px 45px;
+  border-radius: 50px;
+  border: none;
+  background: #f4f6f9;
+  font-size: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: 0.3s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.3);
+}
+
+.search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #888;
+}
+
+.search-btn-modern {
+  padding: 14px 28px;
+  border-radius: 50px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: black;
+  transition: 0.3s ease;
+}
+
+.search-btn-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+
+
+/* ================= PROMOTE SECTION ================= 
+/* ================= STATS SECTION ================= */
+
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  margin: 50px 0;
+}
+
+.stat-box {
+  background: white;
+  border-radius: 18px;
+  padding: 35px 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: 0.3s ease;
+}
+
+.stat-box:hover {
+  transform: translateY(-5px);
+}
+
+.stat-box h3 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.stat-box p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.show-more-wrapper {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.show-more-btn {
+  background: #111;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.show-more-btn:hover {
+  background: #ff3b5c;
+  transform: translateY(-2px);
+}
+.trending-card {
+  border: 2px solid #ff3b5c;
+  position: relative;
+}
+
+.trending-card::before {
+  content: "🔥 Trending";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #ff3b5c;
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+.event-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.event-card:hover {
+  transform: translateY(-6px);
+}.event-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+@media (min-width: 769px) {
+  .event-card img {
+    height: 180px;
+  }
+}.events-grid {
+  display: grid;
+  gap: 15px;
+
+  /* Default for mobile */
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* 📱 Mobile → 2 cards per row */
+@media (max-width: 768px) {
+  .events-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 💻 Desktop → 4 cards per row */
+@media (min-width: 769px) {
+  .events-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .events-grid {
+     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+
+
+/* my order */
+/* ============================= */
+/* MY TICKETS PAGE */
+/* ============================= */
+
+.tickets-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 30px 20px;
+}
+
+.tickets-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.no-ticket {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+}
+
+/* ============================= */
+/* TICKET CARD */
+/* ============================= */
+
+.ticket-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  padding: 20px 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Dotted divider */
+.ticket-card::after {
+  content: "";
+  position: absolute;
+  right: 170px;
+  top: 0;
+  height: 100%;
+  border-right: 2px dashed #ddd;
+}
+
+/* LEFT SIDE */
+.ticket-left h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.ticket-left p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.booking-date {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #888;
+}
+
+.booking-id {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #aaa;
+}
+
+/* RIGHT SIDE QR */
+.ticket-right {
+  text-align: center;
+}
+
+.ticket-right img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.scan-text {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #666;
+}
+
+/* ============================= */
+/* MOBILE RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 768px) {
+
+  .ticket-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ticket-card::after {
+    display: none;
+  }
+
+  .ticket-right {
+    margin-top: 20px;
+  }
+
+}
+.nav-search {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 30px;
+  padding: 4px 10px;
+  margin-left: 20px;
+  transition: 0.3s ease;
+}
+
+.nav-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 8px;
+  width: 160px;
+  font-size: 14px;
+}
+
+.search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.search-btn:hover {
+  color: #ff3b5c;
+  transform: scale(1.1);
+}
+
+/* Mobile Search */
+
+.mobile-search {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 25px;
+  padding: 6px 10px;
+  margin-bottom: 15px;
+}
+
+.mobile-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  padding: 6px;
 }

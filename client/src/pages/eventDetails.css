@@ -442,3 +442,32 @@
 .ticket-details strong {
   color: #000;
 }
+
+.search-wrapper {
+  display: flex;
+  gap: 10px;
+  margin: 30px 0;
+}
+
+.search-wrapper input {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 30px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-wrapper button {
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: none;
+  background: #111;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.search-wrapper button:hover {
+  background: #ff3b5c;
+}

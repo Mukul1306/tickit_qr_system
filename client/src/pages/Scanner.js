@@ -117,8 +117,13 @@ function Scanner() {
       <p><strong>Email:</strong> {scannedData.email}</p>
 
       <p><strong>Age:</strong> {scannedData.age}</p>
+      <p><strong>College:</strong> {scannedData.collegeName} ({scannedData.collegeId})</p>
+      <p><strong>Location:</strong> {scannedData.location}</p>
+      <p><strong>LinkedIn:</strong> {scannedData.linkedin ? <a href={scannedData.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">View Profile</a> : "N/A"}</p>  
+
 
       <p><strong>Booking ID:</strong> {scannedData.bookingId}</p>
+   <p><strong>seat quantity:</strong> {scannedData.quantity}</p>
 
       <p>
         <strong>Status:</strong>{" "}

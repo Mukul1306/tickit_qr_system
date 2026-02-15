@@ -33,7 +33,7 @@ const handleSubmit = async (e) => {
       navigate("/admin/dashboard");
     } 
     else if (role === "super_admin") {
-      navigate("/super-admin/dashboard");
+      navigate("/super-admin");
     }
     else if (role === "volunteer") {
       navigate("/volunteer/dashboard");

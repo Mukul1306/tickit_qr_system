@@ -1,0 +1,232 @@
+/* ===== PAGE WRAPPER ===== */
+.create-ad-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f9fafb, #eef2ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* ===== CARD CONTAINER ===== */
+.create-ad-card {
+  width: 100%;
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* ===== TITLE ===== */
+.create-ad-card h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #111827;
+  text-align: center;
+}
+
+/* ===== INPUT FIELDS ===== */
+.create-ad-card input,
+.create-ad-card textarea,
+.create-ad-card select {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  font-size: 14px;
+  transition: 0.3s;
+  background: #ffffff;
+}
+
+.create-ad-card input:focus,
+.create-ad-card textarea:focus,
+.create-ad-card select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* ===== TEXTAREA ===== */
+.create-ad-card textarea {
+  resize: none;
+  min-height: 100px;
+}
+
+/* ===== IMAGE PREVIEW ===== */
+.ad-preview {
+  margin-top: 15px;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.ad-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===== BUTTON ===== */
+.create-ad-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  color: #000;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.create-ad-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.25);
+}
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-approved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+
+
+
+.admin-ads-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.ads-heading {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.no-ads {
+  color: gray;
+  font-size: 16px;
+}
+
+.ads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.ad-analytics-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+  transition: 0.3s ease;
+}
+
+.ad-analytics-card:hover {
+  transform: translateY(-5px);
+}
+
+.ad-analytics-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.ad-info {
+  padding: 20px;
+}
+
+.ad-info h3 {
+  margin-bottom: 10px;
+}
+
+.status {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.status.approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.ad-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.ad-stats p {
+  font-size: 12px;
+  color: gray;
+}
+
+.ad-stats strong {
+  font-size: 16px;
+}
+
+.delete-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}

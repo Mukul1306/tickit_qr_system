@@ -4,10 +4,13 @@ const eventSchema = new mongoose.Schema({
   title: String,
   description: String,
   date: Date,
+  collegeName: String,
+  collegeId: String,
+  linkedin: String,
   location: String,
   price: Number,
   imageUrl: String,
-  upiId: String,
+  
 
   isPaid: {
     type: Boolean,
@@ -28,6 +31,12 @@ const eventSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   },
+
+  isTrending: {
+  type: Boolean,
+  default: false
+},
+
      // 🔥 THIS IS IMPORTANT
 customFields: [
   {
@@ -60,6 +69,9 @@ customFields: [
     default: "pending"
   }
 
-}, { timestamps: true });
+}, 
+
+
+{ timestamps: true });
 
 module.exports = mongoose.model("Event", eventSchema);
