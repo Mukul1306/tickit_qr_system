@@ -16,7 +16,9 @@ app.use(cors(
 
 app.use(express.json());
 
-
+app.get("/", (req, res) => {
+  res.send ("Event management API is running");
+});
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB Connected"))
